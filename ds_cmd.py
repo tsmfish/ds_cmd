@@ -111,7 +111,7 @@ def execute_commands(ds_name,
 
     # Connect and get basic inform
     print_for_ds(ds_name,
-                 '=' * 8 + ' Start process ...' + '=' * 8,
+                 '=' * 8 + ' Start process ... ' + '=' * 8,
                  io_lock,
                  log_file_name,
                  color)
@@ -144,7 +144,7 @@ def execute_commands(ds_name,
             print_for_ds(ds_name, "Error while execute command {0}".format(command))
 
     print_for_ds(ds_name,
-                 '=' * 8 + ' Finish process.' + '=' * 8,
+                 '=' * 8 + ' Finish process. ' + '=' * 8,
                  io_lock,
                  log_file_name,
                  COLORS.ok)
@@ -320,13 +320,13 @@ if __name__ == "__main__":
 
         for ds_complete in sorted(result[COMPLETE]):
             if ds_colors[ds_complete]:
-                print(ds_colors[ds_complete]+"\t\tResult for {0}".format(ds_complete)+COLORS.end)
+                print("-"*8+ds_colors[ds_complete]+" Result for {0} ".format(ds_complete)+"-"*8+COLORS.end)
                 print(ds_colors[ds_complete]+result[PRINTOUTS][ds_complete].format(ds_complete)+COLORS.end)
-                print(ds_colors[ds_complete]+"\t\tFinish for {0}".format(ds_complete) + COLORS.end)
+                print("-"*8+ds_colors[ds_complete]+" Finish for {0} ".format(ds_complete)+"-"*8+COLORS.end)
             else:
-                print("\t\tResult for {0}".format(ds_complete))
+                print("-"*8+" Result for {0} ".format(ds_complete)+"-"*8)
                 print(result[PRINTOUTS][ds_complete].format(ds_complete))
-                print("\t\tFinish for {0}".format(ds_complete))
+                print("-"*8+" Finish for {0} ".format(ds_complete)+"-"*8)
 
         if options.colorize and not options.no_threads:
             line_complete, line_temporary, line_fatal = COLORS.end, COLORS.end, COLORS.end
