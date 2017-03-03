@@ -65,7 +65,7 @@ class COLORS(object):
 __ds_host_name_parse = re.compile(r'\b([A-Z]+?\d+?-[A-Z]{3})(\d+?)\b', re.IGNORECASE)
 
 
-def print_for_ds(host, message, print_lock=None, log_file_name=None, host_color=None, message_color=None):
+def ds_print(host, message, print_lock=None, log_file_name=None, host_color=None, message_color=None):
     """
     Print colored message with formatted header
     

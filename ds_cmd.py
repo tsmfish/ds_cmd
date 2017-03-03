@@ -11,7 +11,7 @@ import re
 from Queue import Queue
 
 
-from ds_helper import COLORS, print_for_ds, extract, is_contains, ds_compare
+from ds_helper import COLORS, ds_print, extract, is_contains, ds_compare
 
 import sys
 sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/ecdsa-0.13-py2.6.egg/')
@@ -112,28 +112,28 @@ def execute_commands(ds_name,
     }
 
     # Connect and get basic inform
-    print_for_ds(ds_name,
+    ds_print(ds_name,
                  '=' * 8 + ' Start process ... ' + '=' * 8,
-                 io_lock,
-                 log_file_name,
-                 color)
+             io_lock,
+             log_file_name,
+             color)
 
     for tray in range(RETRY_CONNECTION_LIMIT):
         try:
             connection = ConnectHandler(**paramiters)
             break
         except NetMikoTimeoutException as e:
-            print_for_ds(ds_name, str(e))
+            ds_print(ds_name, str(e))
         except NetMikoAuthenticationException as e:
-            print_for_ds(ds_name, str(e))
+            ds_print(ds_name, str(e))
             post_result({NAME: ds_name, RESULT: FATAL}, result_queue, log_file_name)
             return
         except Exception as e:
             if tray != RETRY_CONNECTION_LIMIT - 1:
-                print_for_ds(ds_name, 'Cannot connect! Try reconnect...', io_lock, log_file_name, color, COLORS.info)
-                print_for_ds(ds_name, str(e), io_lock, log_file_name, color, COLORS.info)
+                ds_print(ds_name, 'Cannot connect! Try reconnect...', io_lock, log_file_name, color, COLORS.info)
+                ds_print(ds_name, str(e), io_lock, log_file_name, color, COLORS.info)
             else:
-                print_for_ds(ds_name, 'Cannot connect!', io_lock, log_file_name, color, COLORS.error)
+                ds_print(ds_name, 'Cannot connect!', io_lock, log_file_name, color, COLORS.error)
                 post_result({NAME: ds_name, RESULT: TEMPORARY}, result_queue, log_file_name)
                 return
         time.sleep(FAIL_CONNECTION_WAIT_INTERVALS[tray])
@@ -145,17 +145,17 @@ def execute_commands(ds_name,
             commands_printout += connection.send_command(command)
             # print_for_ds(ds_name, commands_printout, io_lock, None, color)
         except IOError:
-            print_for_ds(ds_name, "Error while execute command {0}".format(command))
+            ds_print(ds_name, "Error while execute command {0}".format(command))
 
     commands_printout = re.sub(r'^\s*(\S.+)', r'\1', commands_printout, re.MULTILINE)
     commands_printout = re.sub(r'(.+\S)\s*$', r'\1', commands_printout, re.MULTILINE)
 
-    print_for_ds(ds_name,
+    ds_print(ds_name,
                  '=' * 8 + ' Finish process. ' + '=' * 8,
-                 io_lock,
-                 log_file_name,
-                 color,
-                 COLORS.ok)
+             io_lock,
+             log_file_name,
+             color,
+             COLORS.ok)
     post_result({NAME: ds_name, RESULT: COMPLETE, PRINTOUTS: commands_printout}, result_queue, log_file_name)
 
 
@@ -263,7 +263,7 @@ if __name__ == "__main__":
                                      log_to_file=options.log_to_file,
                                      color=ds_colors[ds_name])
                 except Exception as e:
-                    print_for_ds(ds_name, "**! Unhandled exception " + str(e), ds_colors[ds_name], COLORS.error)
+                    ds_print(ds_name, "**! Unhandled exception " + str(e), ds_colors[ds_name], COLORS.error)
                     result_queue.put({RESULT: FATAL, NAME: ds_name})
                 current_time = time.time()
                 handled_ds_count += 1
