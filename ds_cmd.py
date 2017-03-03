@@ -137,9 +137,9 @@ def execute_commands(ds_name,
     commands_printout = ""
     for command in commands:
         try:
-            print_for_ds(ds_name, command, io_lock, None, color)
+            # print_for_ds(ds_name, command, io_lock, None, color)
             commands_printout += connection.send_command(command)
-            print_for_ds(ds_name, commands_printout, io_lock, None, color)
+            # print_for_ds(ds_name, commands_printout, io_lock, None, color)
         except IOError:
             print_for_ds(ds_name, "Error while execute command {0}".format(command))
 
@@ -317,14 +317,9 @@ if __name__ == "__main__":
                             time.strftime(log_file_format.format(ds_name=ds_name)))
 
         for complete in result[COMPLETE]:
-            if ds_colors[complete]:
-                print(ds_colors[complete[NAME]]+"\t\tResult for {0}".format(complete[NAME])+COLORS.end)
-                print(ds_colors[complete[NAME]]+complete[PRINTOUTS].format(complete[NAME])+COLORS.end)
-                print(ds_colors[complete[NAME]] + "\t\tFinish for {0}".format(complete[NAME]) + COLORS.end)
-            else:
-                print("\t\tResult for {0}".format(complete[NAME]))
-                print(complete[PRINTOUTS].format(complete[NAME]))
-                print("\t\tFinish for {0}".format(complete[NAME]))
+            print(ds_colors[complete[NAME]]+"\t\tResult for {0}".format(complete[NAME])+COLORS.end)
+            print(ds_colors[complete[NAME]]+complete[PRINTOUTS].format(complete[NAME])+COLORS.end)
+            print(ds_colors[complete[NAME]] + "\t\tFinish for {0}".format(complete[NAME]) + COLORS.end)
 
         if options.colorize and not options.no_threads:
             line_complete, line_temporary, line_fatal = COLORS.end, COLORS.end, COLORS.end
