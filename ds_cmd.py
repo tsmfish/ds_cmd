@@ -7,7 +7,9 @@ import optparse
 import random
 import threading
 import time
+import re
 from Queue import Queue
+
 
 from ds_helper import COLORS, print_for_ds, extract, is_contains
 
@@ -143,10 +145,14 @@ def execute_commands(ds_name,
         except IOError:
             print_for_ds(ds_name, "Error while execute command {0}".format(command))
 
+    re.sub(r'^[\s\n]*?(\b.+)', r'$1', re.MULTILINE|re.DOTALL)
+    re.sub(r'^(.+)\b[\s\n]*$]', r'$1', re.MULTILINE | re.DOTALL)
+
     print_for_ds(ds_name,
                  '=' * 8 + ' Finish process. ' + '=' * 8,
                  io_lock,
                  log_file_name,
+                 color,
                  COLORS.ok)
     post_result({NAME: ds_name, RESULT: COMPLETE, PRINTOUTS: commands_printout}, result_queue, log_file_name)
 
@@ -320,9 +326,9 @@ if __name__ == "__main__":
 
         for ds_complete in sorted(result[COMPLETE]):
             if ds_colors[ds_complete]:
-                print("-"*8+ds_colors[ds_complete]+" Result for {0} ".format(ds_complete)+"-"*8+COLORS.end)
+                print(ds_colors[ds_complete]+"-"*8+" Result for {0} ".format(ds_complete)+"-"*8+COLORS.end)
                 print(ds_colors[ds_complete]+result[PRINTOUTS][ds_complete].format(ds_complete)+COLORS.end)
-                print("-"*8+ds_colors[ds_complete]+" Finish for {0} ".format(ds_complete)+"-"*8+COLORS.end)
+                print(ds_colors[ds_complete]+"-"*8+" Finish for {0} ".format(ds_complete)+"-"*8+COLORS.end)
             else:
                 print("-"*8+" Result for {0} ".format(ds_complete)+"-"*8)
                 print(result[PRINTOUTS][ds_complete].format(ds_complete))
