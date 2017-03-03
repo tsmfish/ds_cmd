@@ -301,7 +301,7 @@ if __name__ == "__main__":
             thread_result = result_queue.get()
             result[thread_result[RESULT]].append(thread_result[NAME])
             if thread_result[RESULT] == COMPLETE:
-                result[PRINTOUTS][NAME] = thread_result[PRINTOUTS]
+                result[PRINTOUTS][thread_result[NAME]] = thread_result[PRINTOUTS]
 
         # determinate ds with unhandled error and mark it as FATAL
         unhandled_ds = list()
