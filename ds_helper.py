@@ -157,12 +157,18 @@ def extract(regexp, text):
 
 
 def ds_compare(left, right):
+    """
+    
+    :param left: switch name
+    :type left: str 
+    :param right: switch name
+    :type right: str
+    :return: -1 / 0 / 1 according compare 
+    """
     __parser = re.compile(r'([a-z]+?)(\d+?)-([a-z]+?)(\d+)', re.IGNORECASE)
     try:
         l1, l2, l3, l4 = __parser.findall(left)[0]
         r1, r2, r3, r4 = __parser.findall(right)[0]
-        print __parser.findall(left)[0]
-        print __parser.findall(right)[0]
         if l1 != r1:
             return (1, -1)[l1 < r1]
         elif l3 != r3:
@@ -178,3 +184,4 @@ def ds_compare(left, right):
         return "" == ""
     except TypeError:
         return "" == ""
+
