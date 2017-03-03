@@ -11,7 +11,7 @@ import re
 from Queue import Queue
 
 
-from ds_helper import COLORS, print_for_ds, extract, is_contains
+from ds_helper import COLORS, print_for_ds, extract, is_contains, ds_compare
 
 import sys
 sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/ecdsa-0.13-py2.6.egg/')
@@ -326,7 +326,7 @@ if __name__ == "__main__":
                             None,
                             time.strftime(log_file_format.format(ds_name=ds_name)))
 
-        for ds_complete in sorted(result[COMPLETE]):
+        for ds_complete in sorted(result[COMPLETE], ds_compare):
             if ds_colors[ds_complete]:
                 print(ds_colors[ds_complete]+"-"*8+" Result for {0} ".format(ds_complete)+"-"*8+COLORS.end)
                 print(ds_colors[ds_complete]+result[PRINTOUTS][ds_complete].format(ds_complete)+COLORS.end)
@@ -341,17 +341,17 @@ if __name__ == "__main__":
         else:
             line_complete, line_temporary, line_fatal = '', '', ''
 
-        for ds in sorted(result[COMPLETE]):
+        for ds in sorted(result[COMPLETE], ds_compare):
             if ds_colors[ds]:
                 line_complete += ds_colors[ds] + ds + COLORS.end + " "
             else:
                 line_complete += ds + " "
-        for ds in sorted(result[TEMPORARY]):
+        for ds in sorted(result[TEMPORARY], ds_compare):
             if ds_colors[ds]:
                 line_temporary += ds_colors[ds] + ds + COLORS.end + " "
             else:
                 line_temporary += ds + " "
-        for ds in sorted(result[FATAL]):
+        for ds in sorted(result[FATAL], ds_compare):
             if ds_colors[ds]:
                 line_fatal += ds_colors[ds] + ds + COLORS.end + " "
             else:

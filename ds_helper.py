@@ -154,3 +154,22 @@ def extract(regexp, text):
         return re.findall(regexp, text, re.IGNORECASE)[0]
     except IndexError:
         return ""
+
+
+def ds_compare(left, right):
+    __parser = re.compile(r'([a-z])(\d+)-([a-z])(\d+)', re.IGNORECASE)
+    try:
+        l1, l2, l3, l4 = __parser.findall(left)[0]
+        r1, r2, r3, r4 = __parser.findall(right)[0]
+        if l1 != r1:
+            return l1 == r1
+        elif l3 != r3:
+            return l3 == r3
+        elif l4 != r4:
+            return l4 == r4
+        else:
+            return l2 == r2
+    except IndexError:
+        return "" == ""
+    except TypeError:
+        return "" == ""
