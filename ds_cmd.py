@@ -143,7 +143,6 @@ def execute_commands(ds_name,
         except IOError:
             print_for_ds(ds_name, "Error while execute command {0}".format(command))
 
-
     print_for_ds(ds_name,
                  '=' * 8 + ' Finish process.' + '=' * 8,
                  io_lock,
@@ -232,134 +231,127 @@ if __name__ == "__main__":
     print COLORS.info+"Start running: {0}".format(time.strftime("%H:%M:%S"))+COLORS.end
     start_time = time.time()
 
-    result_queue, threads = Queue(), list()
-    if len(ds_list) == 1:
-        execute_commands(ds_list[0],
-                         user,
-                         secret,
-                         commands,
-                         result_queue,
-                         log_to_file=options.log_to_file)
-    else:
-        io_lock = threading.Lock()
-        result = {COMPLETE: list(), FATAL: list(), TEMPORARY: ds_list}
-        colorIndex = 0
-        ds_colors = {}
+    io_lock = threading.Lock()
+    result = {COMPLETE: list(), FATAL: list(), TEMPORARY: ds_list}
+    colorIndex = 0
+    ds_colors = {}
 
-        while result[TEMPORARY]:
-            if options.no_threads:
-                handled_ds_count = 0
-                start_tour_time = time.time()
+    while result[TEMPORARY]:
+        result_queue, threads = Queue(), list()
 
-                for ds_name in result[TEMPORARY]:
-                    if ds_name not in ds_colors:
+        if options.no_threads or len(ds_list) == 1:
+            handled_ds_count = 0
+            start_tour_time = time.time()
+
+            for ds_name in result[TEMPORARY]:
+                if ds_name not in ds_colors:
+                    ds_colors[ds_name] = None
+                try:
+                    execute_commands(ds_name,
+                                     user,
+                                     secret,
+                                     commands,
+                                     result_queue,
+                                     log_to_file=options.log_to_file,
+                                     color=ds_colors[ds_name])
+                except Exception as e:
+                    print_for_ds(ds_name, "**! Unhandled exception " + str(e), ds_colors[ds_name], COLORS.error)
+                    result_queue.put({RESULT: FATAL, NAME: ds_name})
+                current_time = time.time()
+                handled_ds_count += 1
+                print '\n' + COLORS.info +\
+                      '=' * 8 + \
+                      ' total: {0}\t complete: {1}\t remaining: {2} '.format(len(result[TEMPORARY]),
+                                                                             handled_ds_count,
+                                                                             len(result[TEMPORARY])-handled_ds_count) + \
+                      '=' * 8
+                print '=' * 4 + \
+                      ' time elapsed: {0}\t time remaining: {1} '.format(time.strftime('%H:%M:%S',
+                                                                                       time.gmtime(current_time - start_time)),
+                                                                         time.strftime('%H:%M:%S',
+                                                                                       time.gmtime((current_time-start_tour_time)/handled_ds_count*(len(result[TEMPORARY])-handled_ds_count)))) + \
+                      '=' * 4 + \
+                      '\n' + COLORS.end
+        else:
+            for ds_name in result[TEMPORARY]:
+                if ds_name not in ds_colors:
+                    if options.colorize:
+                        ds_colors[ds_name] = COLORS.colors[colorIndex]
+                        colorIndex = (colorIndex + 1) % len(COLORS.colors)
+                    else:
                         ds_colors[ds_name] = None
-                    try:
-                        execute_commands(ds_name,
-                                         user,
-                                         secret,
-                                         commands,
-                                         result_queue,
-                                         log_to_file=options.log_to_file,
-                                         color=ds_colors[ds_name])
-                    except Exception as e:
-                        print_for_ds(ds_name, "**! Unhandled exception " + str(e), ds_colors[ds_name], COLORS.error)
-                        result_queue.put({RESULT: FATAL, NAME: ds_name})
-                    current_time = time.time()
-                    handled_ds_count += 1
-                    print '\n' + COLORS.info +\
-                          '=' * 8 + \
-                          ' total: {0}\t complete: {1}\t remaining: {2} '.format(len(result[TEMPORARY]),
-                                                                                 handled_ds_count,
-                                                                                 len(result[TEMPORARY])-handled_ds_count) + \
-                          '=' * 8
-                    print '=' * 4 + \
-                          ' time elapsed: {0}\t time remaining: {1} '.format(time.strftime('%H:%M:%S',
-                                                                                           time.gmtime(current_time - start_time)),
-                                                                             time.strftime('%H:%M:%S',
-                                                                                           time.gmtime((current_time-start_tour_time)/handled_ds_count*(len(result[TEMPORARY])-handled_ds_count)))) + \
-                          '=' * 4 + \
-                          '\n' + COLORS.end
-            else:
-                for ds_name in result[TEMPORARY]:
-                    if ds_name not in ds_colors:
-                        if options.colorize:
-                            ds_colors[ds_name] = COLORS.colors[colorIndex]
-                            colorIndex = (colorIndex + 1) % len(COLORS.colors)
-                        else:
-                            ds_colors[ds_name] = None
 
-                    thread = threading.Thread(target=execute_commands, name=ds_name, args=(ds_name,
-                                                                                           user,
-                                                                                           secret,
-                                                                                           commands,
-                                                                                           result_queue,
-                                                                                           io_lock,
-                                                                                           options.log_to_file,
-                                                                                           ds_colors[ds_name]))
-                    thread.start()
-                    threads.append(thread)
+                thread = threading.Thread(target=execute_commands, name=ds_name, args=(ds_name,
+                                                                                       user,
+                                                                                       secret,
+                                                                                       commands,
+                                                                                       result_queue,
+                                                                                       io_lock,
+                                                                                       options.log_to_file,
+                                                                                       ds_colors[ds_name]))
+                thread.start()
+                threads.append(thread)
 
-                for thread in threads:
-                    thread.join()
+            for thread in threads:
+                thread.join()
 
-            result[TEMPORARY] = list()
+        result[TEMPORARY] = list()
 
-            while not result_queue.empty():
-                thread_result = result_queue.get()
-                result[thread_result[RESULT]].append(thread_result[NAME])
+        while not result_queue.empty():
+            thread_result = result_queue.get()
+            result[thread_result[RESULT]].append(thread_result[NAME])
 
-            # determinate ds with unhandled error and mark it as FATAL
-            unhandled_ds = list()
-            for ds_name in ds_list:
-                if ds_name not in result[COMPLETE] and \
-                                ds_name not in result[TEMPORARY] and \
-                                ds_name not in result[FATAL]:
-                    unhandled_ds.append(ds_name)
+        # determinate ds with unhandled error and mark it as FATAL
+        unhandled_ds = list()
+        for ds_name in ds_list:
+            if ds_name not in result[COMPLETE] and \
+                            ds_name not in result[TEMPORARY] and \
+                            ds_name not in result[FATAL]:
+                unhandled_ds.append(ds_name)
 
-            for ds_name in unhandled_ds:
-                result[FATAL].append(ds_name)
-                if options.log_to_file:
-                    post_result({NAME: ds_name, RESULT: FATAL},
-                                None,
-                                time.strftime(log_file_format.format(ds_name=ds_name)))
+        for ds_name in unhandled_ds:
+            result[FATAL].append(ds_name)
+            if options.log_to_file:
+                post_result({NAME: ds_name, RESULT: FATAL},
+                            None,
+                            time.strftime(log_file_format.format(ds_name=ds_name)))
 
-            for complete in result[COMPLETE]:
-                print(ds_colors[complete[NAME]]+"\t\tResult for {0}".format(complete[NAME])+COLORS.end)
-                print(ds_colors[complete[NAME]]+complete[PRINTOUTS].format(complete[NAME])+COLORS.end)
-                print(ds_colors[complete[NAME]] + "\t\tFinish for {0}".format(complete[NAME]) + COLORS.end)
+        for complete in result[COMPLETE]:
+            print(ds_colors[complete[NAME]]+"\t\tResult for {0}".format(complete[NAME])+COLORS.end)
+            print(ds_colors[complete[NAME]]+complete[PRINTOUTS].format(complete[NAME])+COLORS.end)
+            print(ds_colors[complete[NAME]] + "\t\tFinish for {0}".format(complete[NAME]) + COLORS.end)
 
+        if options.colorize and not options.no_threads:
+            line_complete, line_temporary, line_fatal = COLORS.end, COLORS.end, COLORS.end
+        else:
+            line_complete, line_temporary, line_fatal = '', '', ''
+
+        for ds in sorted(result[COMPLETE]):
             if options.colorize and not options.no_threads:
-                line_complete, line_temporary, line_fatal = COLORS.end, COLORS.end, COLORS.end
+                line_complete += ds_colors[ds] + ds + COLORS.end + " "
             else:
-                line_complete, line_temporary, line_fatal = '', '', ''
+                line_complete += ds + " "
+        for ds in sorted(result[TEMPORARY]):
+            if options.colorize and not options.no_threads:
+                line_temporary += ds_colors[ds] + ds + COLORS.end + " "
+            else:
+                line_temporary += ds + " "
+        for ds in sorted(result[FATAL]):
+            if options.colorize and not options.no_threads:
+                line_fatal += ds_colors[ds] + ds + COLORS.end + " "
+            else:
+                line_fatal += ds + " "
 
-            for ds in sorted(result[COMPLETE]):
-                if options.colorize and not options.no_threads:
-                    line_complete += ds_colors[ds] + ds + COLORS.end + " "
-                else:
-                    line_complete += ds + " "
-            for ds in sorted(result[TEMPORARY]):
-                if options.colorize and not options.no_threads:
-                    line_temporary += ds_colors[ds] + ds + COLORS.end + " "
-                else:
-                    line_temporary += ds + " "
-            for ds in sorted(result[FATAL]):
-                if options.colorize and not options.no_threads:
-                    line_fatal += ds_colors[ds] + ds + COLORS.end + " "
-                else:
-                    line_fatal += ds + " "
+        if result[COMPLETE]:  print    COLORS.ok + "\nComplete on       : " + line_complete + COLORS.end
+        if result[TEMPORARY]: print COLORS.warning + "Temporary fault on: " + line_temporary + COLORS.end
+        if result[FATAL]:     print   COLORS.fatal + "Fatal error on    : " + line_fatal + COLORS.end
 
-            if result[COMPLETE]:  print    COLORS.ok + "\nComplete on       : " + line_complete + COLORS.end
-            if result[TEMPORARY]: print COLORS.warning + "Temporary fault on: " + line_temporary + COLORS.end
-            if result[FATAL]:     print   COLORS.fatal + "Fatal error on    : " + line_fatal + COLORS.end
-
-            if not result[TEMPORARY]: break  # finish try loading
-            answer = ''
-            while answer not in ["Y", "N"]:
-                answer = raw_input("\nRepeat load on temporary faulty nodes (Y-yes): ").strip().upper()
-            if answer != "Y": break
-            print
+        if not result[TEMPORARY]: break  # finish try loading
+        answer = ''
+        while answer not in ["Y", "N"]:
+            answer = raw_input("\nRepeat load on temporary faulty nodes (Y-yes): ").strip().upper()
+        if answer != "Y": break
+        print
 
     print COLORS.info + "\nFinish running: {0}".format(time.strftime("%H:%M:%S"))
     print 'Time elapsed: {0}'.format(time.strftime('%H:%M:%S', time.gmtime(time.time() - start_time))) + COLORS.end
