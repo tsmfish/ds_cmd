@@ -137,7 +137,9 @@ def execute_commands(ds_name,
     commands_printout = ""
     for command in commands:
         try:
+            print_for_ds(ds_name, command, io_lock, None, color)
             commands_printout += connection.send_command(command)
+            print_for_ds(ds_name, commands_printout, io_lock, None, color)
         except IOError:
             print_for_ds(ds_name, "Error while execute command {0}".format(command))
 

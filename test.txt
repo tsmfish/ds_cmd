@@ -1,0 +1,32 @@
+import base64
+import getpass
+import optparse
+import random
+import threading
+import time
+from Queue import Queue
+
+from ds_helper import COLORS, print_for_ds, extract, is_contains
+
+import sys
+sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/ecdsa-0.13-py2.6.egg/')
+sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/requests-2.9.1-py2.6.egg')
+#sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/paramiko-1.16.0-py2.6.egg')
+sys.path.insert(1, '/home/butko/.local/lib/python2.6/site-packages/netmiko-1.1.0-py2.6.egg')
+
+
+from netmiko import ConnectHandler, NetMikoTimeoutException, NetMikoAuthenticationException
+
+
+paramiters = {
+    'device_type': 'alcatel_sros',
+    'host': "ds1-kha3",
+    'port': 22,
+    'username': "pmalko",
+    'password': "kP7C-N7d",
+    'global_delay_factor': 1,
+    'ssh_strict': False,
+    'timeout': 8.0,
+}
+
+connection = ConnectHandler(**paramiters)
