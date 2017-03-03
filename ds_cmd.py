@@ -212,7 +212,7 @@ if __name__ == "__main__":
 
     commands = list()
     for command_raw in commands_raw:
-        if not is_contains(comment_line_pattern):
+        if not is_contains(comment_line_pattern, command_raw):
             commands.append(command_raw)
 
     if not commands or len(commands) < 1:
