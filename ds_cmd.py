@@ -300,6 +300,8 @@ if __name__ == "__main__":
         while not result_queue.empty():
             thread_result = result_queue.get()
             result[thread_result[RESULT]].append(thread_result[NAME])
+            if thread_result[RESULT] == COMPLETE:
+                result[PRINTOUTS][NAME] = thread_result[PRINTOUTS]
 
         # determinate ds with unhandled error and mark it as FATAL
         unhandled_ds = list()
@@ -316,10 +318,10 @@ if __name__ == "__main__":
                             None,
                             time.strftime(log_file_format.format(ds_name=ds_name)))
 
-        for complete in result[COMPLETE]:
-            print(ds_colors[complete[NAME]]+"\t\tResult for {0}".format(complete[NAME])+COLORS.end)
-            print(ds_colors[complete[NAME]]+complete[PRINTOUTS].format(complete[NAME])+COLORS.end)
-            print(ds_colors[complete[NAME]] + "\t\tFinish for {0}".format(complete[NAME]) + COLORS.end)
+        for ds_complete in result[COMPLETE]:
+            print(ds_colors[ds_complete]+"\t\tResult for {0}".format(ds_complete)+COLORS.end)
+            print(ds_colors[ds_complete]+result[PRINTOUTS][ds_complete].format(ds_complete)+COLORS.end)
+            print(ds_colors[ds_complete] + "\t\tFinish for {0}".format(ds_complete) + COLORS.end)
 
         if options.colorize and not options.no_threads:
             line_complete, line_temporary, line_fatal = COLORS.end, COLORS.end, COLORS.end
