@@ -284,7 +284,6 @@ if __name__ == "__main__":
                         else:
                             ds_colors[ds_name] = None
 
-
                     thread = threading.Thread(target=execute_commands, name=ds_name, args=(ds_name,
                                                                                            user,
                                                                                            secret,
