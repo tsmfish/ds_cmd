@@ -7,7 +7,7 @@ import optparse
 import random
 import threading
 import time
-import Queue
+from Queue import Queue
 
 from ds_helper import COLORS, print_for_ds, extract, is_contains
 
