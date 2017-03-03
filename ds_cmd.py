@@ -118,7 +118,7 @@ def execute_commands(ds_name,
 
     for tray in range(RETRY_CONNECTION_LIMIT):
         try:
-            connection = ConnectHandler(paramiters)
+            connection = ConnectHandler(**paramiters)
             break
         except NetMikoTimeoutException as e:
             print_for_ds(ds_name, str(e))
