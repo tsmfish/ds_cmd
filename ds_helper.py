@@ -162,13 +162,13 @@ def ds_compare(left, right):
         l1, l2, l3, l4 = __parser.findall(left)[0]
         r1, r2, r3, r4 = __parser.findall(right)[0]
         if l1 != r1:
-            return l1 == r1
+            return (1, -1)[l1 < r1]
         elif l3 != r3:
-            return l3 == r3
+            return (1, -1)[l3 < r3]
         elif l4 != r4:
-            return l4 == r4
+            return (1, -1)[l4 < r4]
         else:
-            return l2 == r2
+            return 0
     except IndexError:
         return "" == ""
     except TypeError:
