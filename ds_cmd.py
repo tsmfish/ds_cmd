@@ -145,7 +145,7 @@ def execute_commands(ds_name,
         except IOError:
             print_for_ds(ds_name, "Error while execute command {0}".format(command))
 
-    re.sub(r'^[\s\n]*?(\b.+)', r'$1', commands_printout, re.MULTILINE|re.DOTALL)
+    re.sub(r'^[\s\n]*(\b.+)', r'$1', commands_printout, re.MULTILINE|re.DOTALL)
     re.sub(r'^(.+)\b[\s\n]*$]', r'$1', commands_printout, re.MULTILINE | re.DOTALL)
 
     print_for_ds(ds_name,
