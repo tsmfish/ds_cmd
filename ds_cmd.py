@@ -232,7 +232,7 @@ if __name__ == "__main__":
     start_time = time.time()
 
     io_lock = threading.Lock()
-    result = {COMPLETE: list(), FATAL: list(), TEMPORARY: ds_list}
+    result = {COMPLETE: list(), FATAL: list(), TEMPORARY: ds_list, PRINTOUTS: {}}
     colorIndex = 0
     ds_colors = {}
 
