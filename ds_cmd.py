@@ -127,6 +127,7 @@ def execute_commands(ds_name,
         except Exception as e:
             if tray != RETRY_CONNECTION_LIMIT - 1:
                 print_for_ds(ds_name, 'Cannot connect! Try reconnect...', io_lock, log_file_name, color, COLORS.info)
+                print_for_ds(ds_name, str(e), io_lock, log_file_name, color, COLORS.info)
             else:
                 print_for_ds(ds_name, 'Cannot connect!', io_lock, log_file_name, color, COLORS.error)
                 post_result({NAME: ds_name, RESULT: TEMPORARY}, result_queue, log_file_name)
