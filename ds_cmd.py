@@ -320,13 +320,13 @@ if __name__ == "__main__":
 
         for ds_complete in result[COMPLETE]:
             if ds_colors[ds_complete]:
-                print(ds_colors[ds_complete[NAME]]+"\t\tResult for {0}".format(ds_complete[NAME])+COLORS.end)
-                print(ds_colors[ds_complete[NAME]]+result[PRINTOUTS][ds_complete].format(ds_complete[NAME])+COLORS.end)
-                print(ds_colors[ds_complete[NAME]] + "\t\tFinish for {0}".format(ds_complete[NAME]) + COLORS.end)
+                print(ds_colors[ds_complete]+"\t\tResult for {0}".format(ds_complete)+COLORS.end)
+                print(ds_colors[ds_complete]+result[PRINTOUTS][ds_complete].format(ds_complete)+COLORS.end)
+                print(ds_colors[ds_complete]+"\t\tFinish for {0}".format(ds_complete) + COLORS.end)
             else:
-                print("\t\tResult for {0}".format(ds_complete[NAME]))
-                print(result[PRINTOUTS][ds_complete].format(ds_complete[NAME]))
-                print("\t\tFinish for {0}".format(ds_complete[NAME]))
+                print("\t\tResult for {0}".format(ds_complete))
+                print(result[PRINTOUTS][ds_complete].format(ds_complete))
+                print("\t\tFinish for {0}".format(ds_complete))
 
         if options.colorize and not options.no_threads:
             line_complete, line_temporary, line_fatal = COLORS.end, COLORS.end, COLORS.end
