@@ -147,8 +147,8 @@ def execute_commands(ds_name,
         except IOError:
             print_for_ds(ds_name, "Error while execute command {0}".format(command))
 
-    commands_printout = re.sub(r'^\s*(\S.+)', r'$1', commands_printout, re.MULTILINE|re.DOTALL)
-    commands_printout = re.sub(r'^(.+\S)\s*$]', r'$1', commands_printout, re.MULTILINE | re.DOTALL)
+    commands_printout = re.sub(r'^\s*(\S.+)', r'\1', commands_printout, re.MULTILINE)
+    commands_printout = re.sub(r'(.+\S)\s*$', r'\1', commands_printout, re.MULTILINE)
 
     print_for_ds(ds_name,
                  '=' * 8 + ' Finish process. ' + '=' * 8,
