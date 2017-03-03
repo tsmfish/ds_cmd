@@ -318,7 +318,7 @@ if __name__ == "__main__":
                             None,
                             time.strftime(log_file_format.format(ds_name=ds_name)))
 
-        for ds_complete in result[COMPLETE]:
+        for ds_complete in sorted(result[COMPLETE]):
             if ds_colors[ds_complete]:
                 print(ds_colors[ds_complete]+"\t\tResult for {0}".format(ds_complete)+COLORS.end)
                 print(ds_colors[ds_complete]+result[PRINTOUTS][ds_complete].format(ds_complete)+COLORS.end)
@@ -334,17 +334,17 @@ if __name__ == "__main__":
             line_complete, line_temporary, line_fatal = '', '', ''
 
         for ds in sorted(result[COMPLETE]):
-            if options.colorize and not options.no_threads:
+            if ds_colors[ds]:
                 line_complete += ds_colors[ds] + ds + COLORS.end + " "
             else:
                 line_complete += ds + " "
         for ds in sorted(result[TEMPORARY]):
-            if options.colorize and not options.no_threads:
+            if ds_colors[ds]:
                 line_temporary += ds_colors[ds] + ds + COLORS.end + " "
             else:
                 line_temporary += ds + " "
         for ds in sorted(result[FATAL]):
-            if options.colorize and not options.no_threads:
+            if ds_colors[ds]:
                 line_fatal += ds_colors[ds] + ds + COLORS.end + " "
             else:
                 line_fatal += ds + " "
