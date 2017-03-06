@@ -34,8 +34,8 @@ RETRY_CONNECTION_LIMIT = 5
 FAIL_CONNECTION_WAIT_INTERVALS = [2, 3, 3, 7, 9, 13, 17, 25, 39]
 RANDOM_WAIT_TIME = 5
 
-ds_name_pattern = r"\b\w+?\d-\w+?\d{0,4}\b"
-comment_line_pattern = r"^\s*?[#/][^\n]+$"
+ds_name_pattern = re.compile(r"\b\w+?\d-\w+?\d{0,4}\b", re.IGNORECASE)
+comment_line_pattern = re.compile(r"^\s*?[#/][^\n]+$", re.IGNORECASE)
 
 
 def post_result(result, queue=None, log_file_name=None):
@@ -151,7 +151,7 @@ def execute_commands(ds_name,
     commands_printout = re.sub(r'(.+\S)\s*$', r'\1', commands_printout, re.MULTILINE)
 
     ds_print(ds_name,
-                 '=' * 8 + ' Finish process. ' + '=' * 8,
+             '=' * 8 + ' Finish process. ' + '=' * 8,
              io_lock,
              log_file_name,
              color,

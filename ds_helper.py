@@ -134,7 +134,7 @@ def is_contains(regexp, text):
     :return: True if string contains regular expression
     :rtype: bool
     """
-    if re.search(regexp, text, re.IGNORECASE):
+    if re.search(regexp, text):
         return True
     else:
         return False
@@ -151,7 +151,7 @@ def extract(regexp, text):
     :rtype: str
     """
     try:
-        return re.findall(regexp, text, re.IGNORECASE)[0]
+        return re.findall(regexp, text)[0]
     except IndexError:
         return ""
 
