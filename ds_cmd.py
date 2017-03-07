@@ -53,8 +53,8 @@ def post_result(result, queue=None, log_file_name=None):
         queue.put(result)
     if log_file_name:
         try:
-            with open(log_file_name, 'a') as log_file:
-                log_file.write("***** result: {1} *****\n"
+            with open(log_file_name, 'a+') as log_file:
+                log_file.write("***** result: {0} *****\n"
                                .format(result[RESULT].upper()))
                 log_file.close()
         except IOError:
@@ -185,7 +185,7 @@ def execute_commands(ds_name,
 if __name__ == "__main__":
     parser = optparse.OptionParser(description='Command execute.',
                                    usage="usage: %prog [options] -f <DS list file> | ds ds ds ... -c command",
-                                   version="v 1.0.34")
+                                   version="v 1.0.35")
     parser.add_option("-f", "--file", dest="ds_list_file_name",
                       help="file with DS list, line started with # or / will be dropped", metavar="FILE")
     parser.add_option("-y", "--yes", dest="force_delete",
