@@ -145,11 +145,11 @@ def execute_commands(ds_name,
             # print_for_ds(ds_name, commands_printout, io_lock, None, color)
         except IOError:
             ds_print(ds_name,
-                     "Error while execute command {0}".format(command),
+                     "Error while execute command: [{0}]".format(command),
                      io_lock,
                      log_file_name,
                      color,
-                     color.warning)
+                     COLORS.warning)
 
     commands_printout = re.sub(r'^\s*(\S.+)', r'\1', commands_printout, re.MULTILINE)
     commands_printout = re.sub(r'(.+\S)\s*$', r'\1', commands_printout, re.MULTILINE)
@@ -185,7 +185,7 @@ def execute_commands(ds_name,
 if __name__ == "__main__":
     parser = optparse.OptionParser(description='Command execute.',
                                    usage="usage: %prog [options] -f <DS list file> | ds ds ds ... -c command",
-                                   version="v 1.0.37")
+                                   version="v 1.0.38")
     parser.add_option("-f", "--file", dest="ds_list_file_name",
                       help="file with DS list, line started with # or / will be dropped", metavar="FILE")
     parser.add_option("-y", "--yes", dest="force_delete",

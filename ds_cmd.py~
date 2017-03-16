@@ -145,19 +145,19 @@ def execute_commands(ds_name,
             # print_for_ds(ds_name, commands_printout, io_lock, None, color)
         except IOError:
             ds_print(ds_name,
-                     "Error while execute command {0}".format(command),
+                     "Error while execute command: [{0}]".format(command),
                      io_lock,
                      log_file_name,
                      color,
-                     color.warning)
+                     COLORS.warning)
 
     commands_printout = re.sub(r'^\s*(\S.+)', r'\1', commands_printout, re.MULTILINE)
     commands_printout = re.sub(r'(.+\S)\s*$', r'\1', commands_printout, re.MULTILINE)
     commands_printout = re.sub(r'\n{2,}', '\n', commands_printout, re.MULTILINE|re.DOTALL)
 
     if log_file_name:
-            try:
-                with open(log_file_name, "a+") as log_file:
+        try:
+            with open(log_file_name, "a+") as log_file:
                 log_file.write(commands_printout)
                 log_file.close()
         except IOError as e:
