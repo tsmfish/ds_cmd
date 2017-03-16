@@ -16,8 +16,9 @@ from ds_helper import COLORS, ds_print, extract, is_contains, ds_compare
 import sys
 sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/ecdsa-0.13-py2.6.egg/')
 sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/requests-2.9.1-py2.6.egg')
-#sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/paramiko-1.16.0-py2.6.egg')
+sys.path.insert(1, '/home/erkki/.local/lib/python2.6/site-packages/paramiko-1.16.0-py2.6.egg')
 sys.path.insert(1, '/home/butko/.local/lib/python2.6/site-packages/netmiko-1.1.0-py2.6.egg')
+sys.path.insert(1, '/home/butko/.local/lib/python2.6/site-packages/scp-0.10.2-py2.6.egg/')
 
 
 from netmiko import ConnectHandler, NetMikoTimeoutException, NetMikoAuthenticationException
@@ -154,24 +155,23 @@ def execute_commands(ds_name,
     commands_printout = re.sub(r'(.+\S)\s*$', r'\1', commands_printout, re.MULTILINE)
     commands_printout = re.sub(r'\n{2,}', '\n', commands_printout, re.MULTILINE|re.DOTALL)
 
-    try:
-        with open(log_file_name, "a+") as log_file:
-            log_file.write(commands_printout)
-            log_file.close()
-    except IOError as e:
-        ds_print(ds_name,
-                 "Can't write result to file [{0}]".format(log_file_name),
-                 io_lock,
-                 log_file_name,
-                 color,
-                 COLORS.error)
-        ds_print(ds_name,
-                 str(e),
-                 io_lock,
-                 color,
-                 COLORS.error)
-        post_result({NAME: ds_name, RESULT: TEMPORARY}, result_queue, log_file_name)
-        return
+    if log_file_name:
+            try:
+                with open(log_file_name, "a+") as log_file:
+                log_file.write(commands_printout)
+                log_file.close()
+        except IOError as e:
+            ds_print(ds_name,
+                     "Can't write result to file [{0}]".format(log_file_name),
+                     io_lock,
+                     log_file_name,
+                     color,
+                     COLORS.error)
+            ds_print(ds_name,
+                     str(e),
+                     io_lock,
+                     color,
+                     COLORS.error)
 
     ds_print(ds_name,
              '=' * 8 + ' Finish process. ' + '=' * 8,
@@ -185,7 +185,7 @@ def execute_commands(ds_name,
 if __name__ == "__main__":
     parser = optparse.OptionParser(description='Command execute.',
                                    usage="usage: %prog [options] -f <DS list file> | ds ds ds ... -c command",
-                                   version="v 1.0.35")
+                                   version="v 1.0.37")
     parser.add_option("-f", "--file", dest="ds_list_file_name",
                       help="file with DS list, line started with # or / will be dropped", metavar="FILE")
     parser.add_option("-y", "--yes", dest="force_delete",
@@ -239,14 +239,14 @@ if __name__ == "__main__":
         try:
             with open(options.command_file, "r") as command_file:
                 for command_line in command_file.readlines():
-                    commands_raw.append(command_file)
+                    commands_raw.append(command_line.strip('\n'))
         except IOError as e:
             print(COLORS.error+"Error while open file: {file}".format(file=options.command_file)+COLORS.end)
             print(str(e))
 
     commands = list()
     for command_raw in commands_raw:
-        if not is_contains(comment_line_pattern, command_raw):
+        if command_raw and not is_contains(comment_line_pattern, command_raw):
             commands.append(command_raw)
 
     if not commands or len(commands) < 1:

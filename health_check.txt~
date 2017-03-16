@@ -1,0 +1,18 @@
+environment no more
+show system alarms
+show version
+show bof
+file dir
+show port
+show card state
+show service sdp-using
+show router interface
+show system ntp
+show system ptp
+show system security ssh
+
+show bof
+show version
+file version cf1:\images\TiMOS-7.0.R13\both.tim
+file version cf1:\boot.tim
+show system alarms
