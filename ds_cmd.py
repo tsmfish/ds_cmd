@@ -185,12 +185,9 @@ def execute_commands(ds_name,
 if __name__ == "__main__":
     parser = optparse.OptionParser(description='Command execute.',
                                    usage="usage: %prog [options] -f <DS list file> | ds ds ds ... -c command",
-                                   version="v 1.0.38")
+                                   version="v 1.0.39")
     parser.add_option("-f", "--file", dest="ds_list_file_name",
                       help="file with DS list, line started with # or / will be dropped", metavar="FILE")
-    parser.add_option("-y", "--yes", dest="force_delete",
-                      help="force remove unused SW images (both/boot)",
-                      action="store_true", default=False)
     parser.add_option("-n", "--no-thread", dest="no_threads",
                       help="execute nodes one by one sequentially",
                       action="store_true", default=False)
