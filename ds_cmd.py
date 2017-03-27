@@ -32,7 +32,7 @@ NAME, RESULT, PRINTOUTS = 'name', 'result', 'printouts'
 
 
 RETRY_CONNECTION_LIMIT = 5
-FAIL_CONNECTION_WAIT_INTERVALS = [2, 3, 3, 7, 9, 13, 17, 25, 39]
+FAIL_CONNECTION_WAIT_INTERVALS = [3,5,9,17,29,37]
 RANDOM_WAIT_TIME = 5
 
 ds_name_pattern = re.compile(r"\b\w+?\d-\w+?\d{0,4}\b", re.IGNORECASE)
@@ -123,10 +123,13 @@ def execute_commands(ds_name,
             break
         except NetMikoTimeoutException as e:
             ds_print(ds_name, str(e))
-        except NetMikoAuthenticationException as e:
-            ds_print(ds_name, str(e))
-            post_result({NAME: ds_name, RESULT: FATAL}, result_queue, log_file_name)
+            ds_print(ds_name, 'Cannot connect!', io_lock, log_file_name, color, COLORS.error)
+            post_result({NAME: ds_name, RESULT: TEMPORARY}, result_queue, log_file_name)
             return
+        # except NetMikoAuthenticationException as e:
+            # ds_print(ds_name, str(e))
+            #post_result({NAME: ds_name, RESULT: FATAL}, result_queue, log_file_name)
+            #return
         except Exception as e:
             if tray != RETRY_CONNECTION_LIMIT - 1:
                 ds_print(ds_name, 'Cannot connect! Try reconnect...', io_lock, log_file_name, color, COLORS.info)
@@ -185,7 +188,7 @@ def execute_commands(ds_name,
 if __name__ == "__main__":
     parser = optparse.OptionParser(description='Command execute.',
                                    usage="usage: %prog [options] -f <DS list file> | ds ds ds ... -c command",
-                                   version="v 1.0.39")
+                                   version="v 1.0.40")
     parser.add_option("-f", "--file", dest="ds_list_file_name",
                       help="file with DS list, line started with # or / will be dropped", metavar="FILE")
     parser.add_option("-n", "--no-thread", dest="no_threads",
