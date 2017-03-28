@@ -187,8 +187,8 @@ def execute_commands(ds_name,
 
 if __name__ == "__main__":
     parser = optparse.OptionParser(description='Command execute.',
-                                   usage="usage: %prog [options] -f <DS list file> | ds ds ds ... -c command",
-                                   version="v 1.0.40")
+                                   usage="usage: %prog [options] [-f <DS list file> | ds ds ds ...] [-c command | --cf command file]",
+                                   version="v 1.0.41")
     parser.add_option("-f", "--file", dest="ds_list_file_name",
                       help="file with DS list, line started with # or / will be dropped", metavar="FILE")
     parser.add_option("-n", "--no-thread", dest="no_threads",
@@ -232,6 +232,10 @@ if __name__ == "__main__":
         exit()
 
     commands_raw = list()
+    if options.commands_str == "f":
+        print COLORS.error+"Please use correct switch: "+COLORS.warning+"--cf command file"+COLORS.end
+        exit()
+
     if options.commands_str:
         for command in options.commands_str.split(";"):
             commands_raw.append(command)
