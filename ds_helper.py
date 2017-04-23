@@ -62,6 +62,25 @@ class COLORS(object):
     ok = green
     info = cyan
 
+    cursor_up_lines   = "\x1b[{0}A"
+    cursor_up_line    = cursor_up_lines.format(1)
+    cursor_down_lines =  "\x1b[{0}B"
+    cursor_down_line  = cursor_down_lines.format(1)
+
+    cursor_to_position = "\x1b[{0};{1}H"
+
+    def move_cursor_to_position(row, column):
+        return COLORS.cursor_to_position.format(row, column)
+
+    clear_line = "\x1b[2K"
+    clear_line_to_end = "\x1b[0K"
+    clear_line_to_begin = "\x1b[1K"
+    clear_screen = "\x1b[2J"
+    clear_screen_to_begin = "\x1b[1J"
+    clear_screen_to_end = "\x1b[0J"
+    clear_screen_with_scrollback = "\x1b[3J"
+
+
 __ds_host_name_parse = re.compile(r'\b([A-Z]+?\d+?-[A-Z]{3})(\d+?)\b', re.IGNORECASE)
 
 
@@ -116,7 +135,7 @@ def ds_print(host, message, print_lock=None, log_file_name=None, host_color=None
             pass
     if log_file_name:
         try:
-            with open(log_file_name, 'a') as log_file:
+            with open(log_file_name, 'a+') as log_file:
                 log_file.write("{0}\n".format(message))
                 log_file.close()
         except IOError:
@@ -181,7 +200,7 @@ def ds_compare(left, right):
             return 0
 
     except IndexError:
-        return "" == ""
+        return "" != ""
     except TypeError:
-        return "" == ""
+        return "" != ""
 
